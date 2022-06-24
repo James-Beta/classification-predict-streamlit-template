@@ -29,7 +29,7 @@ import joblib,os
 import pandas as pd
 
 # Vectorizer
-news_vectorizer = open("resources/tfidfvect.pkl","rb")
+news_vectorizer = open("resources/tfidf.pkl","rb")
 tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl file
 
 # Load your raw data
@@ -62,6 +62,8 @@ def main():
 	# Building out the predication page
 	if selection == "Prediction":
 		st.info("Prediction with ML Models")
+		option = ["Ada Boost Classifier", "Bagging Classifier", "Balanced Bagging Classifier", "K-Nearest Neighbours Classifier", "Logistic Regression Classifier", "Naive Bayes Classifier", "Random Forest Classifier", "Support Vector Classifier"]
+		select = st.sidebar.selectbox("Choose Classifier", option)
 		# Creating a text box for user input
 		tweet_text = st.text_area("Enter Text","Type Here")
 
@@ -70,14 +72,35 @@ def main():
 			vect_text = tweet_cv.transform([tweet_text]).toarray()
 			# Load your .pkl file with the model of your choice + make predictions
 			# Try loading in multiple models to give the user a choice
-			predictor = joblib.load(open(os.path.join("resources/Logistic_regression.pkl"),"rb"))
-			prediction = predictor.predict(vect_text)
-
+			if select == "Ada Boost Classifier":
+				predictor = joblib.load(open(os.path.join("resources/ada.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "Balanced Bagging Classifier":
+				predictor = joblib.load(open(os.path.join("resources/balbc.pkl.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "Bagging Classifier":
+				predictor = joblib.load(open(os.path.join("resources/bc.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "K-Nearest Neighbours Classifier":
+				predictor = joblib.load(open(os.path.join("resources/knn.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "Logistic Regression Classifier":
+				predictor = joblib.load(open(os.path.join("resources/lrm.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "Naive Bayes Classifier":
+				predictor = joblib.load(open(os.path.join("resources/nb.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "Random Forest Classifier":
+				predictor = joblib.load(open(os.path.join("resources/rf.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
+			if select == "Support Vector Classifier":
+				predictor = joblib.load(open(os.path.join("resources/svm.pkl"),"rb"))
+				prediction = predictor.predict(vect_text)
 			# When model has successfully run, will print prediction
 			# You can use a dictionary or similar structure to make this output
 			# more human interpretable.
 			st.success("Text Categorized as: {}".format(prediction))
 
-# Required to let Streamlit instantiate our web app.  
+# Required to let Streamlit instantiate our web app.
 if __name__ == '__main__':
 	main()
