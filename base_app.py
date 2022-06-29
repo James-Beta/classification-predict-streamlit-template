@@ -89,19 +89,10 @@ def main():
         st.info("General Information")
         # You can read a markdown file from supporting resources folder
         # st.markdown("Some information here")
-        #st.video('twitter.mp4')
+        st.video('twitter.mp4')
         st.subheader("Raw Twitter data and label")
         if st.checkbox('Show raw data'):
             st.table(data)
-        MAX_WORDS = 500
-        #if res > MAX_WORDS:
-            #st.warning(
-            #    "⚠️ Only the first 500 words will be reviewed😊"
-            #)
-
-        doc = tweet_text[:MAX_WORDS]
-            # st.write(raw[['sentiment', 'message']])
-
     # Building out the predication page
     if selection == "Prediction":
         #st.info("Prediction with ML Models")
