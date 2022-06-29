@@ -110,7 +110,7 @@ def main():
         if select == "Logistic Regression Classifier":
                             image = Image.open('lrm.jpg')
                             st.image(image)
-                            predictor = joblib.load(open(os.path.join("resources/lrm.pkl"),"rb"))
+                            predictor = joblib.load(open(os.path.join("resources/lmr.pkl"),"rb"))
         if select == "Naive Bayes Classifier":
                             image = Image.open('nb.jpg')
                             st.image(image)
