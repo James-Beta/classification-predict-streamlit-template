@@ -66,15 +66,11 @@ def main():
     # Building out the "Information" page
     if selection == "Information":
         st.info("General Information")
-        # You can read a markdown file from supporting resources folder
-        # st.markdown("Some information here")
-        #st.video('twitter.mp4')
         st.subheader("Raw Twitter data and label")
         if st.checkbox('Show raw data'):
             st.table(data)
     # Building out the predication page
     if selection == "Prediction":
-        #st.info("Prediction with ML Models")
         option = [ "Logistic Regression Classifier", "Naive Bayes Classifier",  "Support Vector Classifier"]
         select = st.sidebar.selectbox("Choose Classifier", option)
         if select == "Logistic Regression Classifier":
