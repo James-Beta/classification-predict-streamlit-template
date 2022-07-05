@@ -320,20 +320,12 @@ def main():
         else:
             if select == "Pro - climate change":
                 filter = 1
-                # image = Image.open('resources/lrm.jpg')
-                # st.image(image)
             if select == "Anti - climate change":
                 filter = -1
-                # image = Image.open('resources/nb.jpg')
-                # st.image(image)
             if select == "Neutral":
                 filter = 0
-                # image = Image.open('resources/svc.jpg')
-                # st.image(image)
             if select == "Factual news":
                 filter = 2
-                # image = Image.open('resources/')
-                # st.image(image)
             uploaded_file = st.file_uploader(
                 "",
                 key="1",
@@ -342,7 +334,7 @@ def main():
             if uploaded_file is not None:
                 file_container = st.expander("Check your uploaded .csv")
                 shows = pd.read_csv(uploaded_file)
-                shows[message] = shows['message'].apply(clean_title)
+                shows['message'] = shows['message'].apply(clean_title)
                 uploaded_file.seek(0)
                 file_container.write(shows)
             else:
