@@ -52,6 +52,19 @@ tweet_cv = joblib.load(news_vectorizer) # loading your vectorizer from the pkl f
 # Load your raw data
 raw = pd.read_csv("resources/train.csv")
 data = pd.DataFrame(raw)
+def clean_title(title):
+
+    pattern_url = r'http[s]?://(?:[A-Za-z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9A-Fa-f][0-9A-Fa-f]))+' #Pattern to remove all hyperlinks
+    title = re.sub(pattern_url,'',title)   #Removing all hyperlinks from statement
+    #title = re.sub('RT @.*:','',title)    #Removing all preceding RT @ from every post
+    title = re.sub('@\w+','',title)  #Removing all  ''@'' twitter handles
+    title = re.sub(r'(\s)#\w+','',title)  ##Removing  all hashtags
+    title = re.sub("[^a-zA-Z0-9 ]", "", title) #Extracting Remaining text from
+    title = re.sub(r'[,!?;-]+', '.', title) #Removing any remaining non-characters
+    title = title.replace('RT', '')     #Removing RT{retweet} from posts
+    title = title.strip().capitalize()   #Removing all remaining whitespaces and Capitalizing all Posts
+    return title
+data['message'] = data['message'].apply(clean_title)
 plt.rcParams['font.size'] = '12'
 # The main function where we will build the actual app
 def main():
@@ -224,8 +237,7 @@ def main():
         prediction = predictor.predict(vect_text)
         if st.button("Classify"):
             MAX_WORDS = 500
-            doc = vect_text[:MAX_WORDS]
-            wordcloud = WordCloud(stopwords=stopwords.words('english'), background_color="white", max_words=500).generate(doc)
+            wordcloud = WordCloud(stopwords=stopwords.words('english'), background_color="white", max_words=500).generate(vect_text)
             if prediction == 1:
                 prediction = 'The tweet supports the belief of man-made climate change'
             if prediction == 2:
@@ -243,7 +255,7 @@ def main():
         image = Image.open('resources/beta.png')
         st.image(image, width = 300)
         st.info("Upload a file containing cleaned tweets to predict multiple tweets and select a specific group of potential customers")
-        st.info("This is a beta trial feature, feel free to give it a try!!  ;)")
+        st.info("This is a beta test feature, feel free to give it a try!!  ;)")
         predictor = joblib.load(open(os.path.join("resources/lmr.pkl"),"rb"))
         option = [ "Predict all tweets", "Pro - climate change", "Anti - climate change",  "Neutral", "Factual news"]
         select = st.sidebar.selectbox("Choose Target Customer", option)
@@ -256,6 +268,7 @@ def main():
             if uploaded_file is not None:
                 file_container = st.expander("Check your uploaded .csv")
                 shows = pd.read_csv(uploaded_file)
+                shows['message'] = shows['message'].apply(clean_title)
                 uploaded_file.seek(0)
                 file_container.write(shows)
             else:
@@ -267,21 +280,29 @@ def main():
             if st.button("Classify"):
                 predictions = []
                 tweet_text = shows['message']
-                for i in tweet_text:
-                    tweet_text1 = i
+                for text in tweet_text:
+                    tweet_text1 = text
                     vect_text = tweet_cv.transform([tweet_text1]).toarray()
                     MAX_WORDS = 500
-                    doc = tweet_text[:MAX_WORDS]
-                    prediction = predictor.predict(doc)
+                    prediction = predictor.predict(vect_text)
+                    if prediction == 1:
+                        prediction = 'The tweet supports the belief of man-made climate change'
+                    if prediction == 2:
+                        prediction = 'The tweet links to factual news about climate change'
+                    if prediction == 0:
+                        prediction = 'The tweet neither supports nor refutes the belief of man-made climate change'
+                    if prediction == -1:
+                        prediction = 'The tweet does not support the belief of man-made climate change'
                     predictions.append(prediction)
                 shows['predictions'] = predictions
-                result_tweets = shows['tweetid', 'predictions']
+                result_tweets = shows[['tweetid', 'predictions']]
                 df = pd.DataFrame(result_tweets)
+                df_show = df.iloc[:20, [0, 1]]
                 st.success('Your predictions are ready!!')
-                st.subheader("Your predictions will appear below 👇 ")
+                st.subheader("A sample of your predictions will appear below 👇 ")
                 st.text("")
 
-                st.table(df)
+                st.table(df_show)
 
                 st.text("")
                 c29, c30, c31 = st.columns([1, 1, 2])
@@ -322,6 +343,7 @@ def main():
             if uploaded_file is not None:
                 file_container = st.expander("Check your uploaded .csv")
                 shows = pd.read_csv(uploaded_file)
+                shows[message] = shows['message'].apply(clean_title)
                 uploaded_file.seek(0)
                 file_container.write(shows)
             else:
@@ -333,22 +355,21 @@ def main():
             if st.button("Classify"):
                 predictions = []
                 tweet_text = shows['message']
-                for i in tweet_text:
-                    tweet_text1 = i
+                for text in tweet_text:
+                    tweet_text1 = text
                     vect_text = tweet_cv.transform([tweet_text1]).toarray()
-                    MAX_WORDS = 500
-                    doc = tweet_text[:MAX_WORDS]
-                    prediction = predictor.predict(doc)
+                    prediction = predictor.predict(vect_text)
                     predictions.append(prediction)
                 shows['predictions'] = predictions
                 result_df = shows[shows['predictions'] == filter]
                 result_tweets = result_df['tweetid']
                 df = pd.DataFrame(result_tweets)
+                df_show = df.iloc[:20, [0, 1]]
                 st.success('Your predictions are ready!!')
-                st.subheader("Potential customers will appear below 👇 ")
+                st.subheader("A sample of your potential customers will appear below 👇 ")
                 st.text("")
 
-                st.table(df)
+                st.table(df_show)
 
                 st.text("")
                 c29, c30, c31 = st.columns([1, 1, 2])
