@@ -297,12 +297,11 @@ def main():
                 shows['predictions'] = predictions
                 result_tweets = shows[['tweetid', 'predictions']]
                 df = pd.DataFrame(result_tweets)
-                df_show = df.iloc[:20, [0, 1]]
                 st.success('Your predictions are ready!!')
                 st.subheader("A sample of your predictions will appear below 👇 ")
                 st.text("")
 
-                st.table(df_show)
+                st.table(df.head())
 
                 st.text("")
                 c29, c30, c31 = st.columns([1, 1, 2])
@@ -364,12 +363,11 @@ def main():
                 result_df = shows[shows['predictions'] == filter]
                 result_tweets = result_df['tweetid']
                 df = pd.DataFrame(result_tweets)
-                df_show = df.iloc[:20, [0, 1]]
                 st.success('Your predictions are ready!!')
                 st.subheader("A sample of your potential customers will appear below 👇 ")
                 st.text("")
 
-                st.table(df_show)
+                st.table(df.head())
 
                 st.text("")
                 c29, c30, c31 = st.columns([1, 1, 2])
